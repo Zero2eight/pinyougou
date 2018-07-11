@@ -110,5 +110,16 @@ public class ItemCatController {
 	public PageResult search(@RequestBody TbItemCat itemCat, int page, int rows  ){
 		return itemCatService.findPage(itemCat, page, rows);		
 	}
+	/**
+	 * 根据父类id搜索商品种类
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("/findByParentId")
+	public List<TbItemCat> findByParentId( long parentId  ){
+		return itemCatService.findByParentId(parentId);
+	}
+	
+	
 	
 }

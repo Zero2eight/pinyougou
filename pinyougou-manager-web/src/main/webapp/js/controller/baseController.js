@@ -26,6 +26,7 @@ app.controller("baseController",function($scope){
 		}
 	}
 	
+	//用于商品种类的展示
 	$scope.jsonToString=function(jsonString,key){
 		var json= JSON.parse(jsonString);
 		var value="";
@@ -35,7 +36,19 @@ app.controller("baseController",function($scope){
 			}
 			value+=json[i][key];
 		}
-		
+		return value;
+	}
+	
+	//用于面包屑转换为字符串
+	$scope.jsonToString2=function(json,key){
+//		var json= JSON.parse(jsonString);
+		var value="";
+		for(var i=0;i<json.length;i++){
+			if(i>0){
+				value+=">";
+			}
+			value+=json[i][key];
+		}
 		return value;
 	}
 });

@@ -99,7 +99,7 @@ public class SellerController {
 		}
 	}
 	
-		/**
+	/**
 	 * 查询+分页
 	 * @param brand
 	 * @param page
@@ -107,8 +107,8 @@ public class SellerController {
 	 * @return
 	 */
 	@RequestMapping("/search")
-	public PageResult search(@RequestBody TbSeller seller, int page, int rows  ){
-		return sellerService.findPage(seller, page, rows);		
+	public PageResult search(@RequestBody TbSeller seller, int page, int rows){
+		return sellerService.findPage(seller, page, rows);
 	}
 	
 }

@@ -22,6 +22,12 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 		);
 	}
 	
+	//更改状态
+	$scope.updateStatus=function(entity,status){
+		$scope.entity.status=status;
+		$scope.save();
+	}
+	
 	//查询实体 
 	$scope.findOne=function(id){				
 		sellerService.findOne(id).success(
@@ -34,7 +40,7 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 	//保存 
 	$scope.save=function(){				
 		var serviceObject;//服务层对象  				
-		if($scope.entity.id!=null){//如果有ID
+		if($scope.entity.status!=null){//如果有ID
 			serviceObject=sellerService.update( $scope.entity ); //修改  
 		}else{
 			serviceObject=sellerService.add( $scope.entity  );//增加 
@@ -43,7 +49,7 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 			function(response){
 				if(response.success){
 					//重新查询 
-		        	$scope.reloadList();//重新加载
+					$scope.reloadList();//重新加载
 				}else{
 					alert(response.message);
 				}

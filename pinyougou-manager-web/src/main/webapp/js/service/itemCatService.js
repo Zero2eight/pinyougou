@@ -25,8 +25,12 @@ app.service('itemCatService',function($http){
 	this.dele=function(ids){
 		return $http.get('../itemCat/delete.do?ids='+ids);
 	}
-	//搜索
+	//搜索,searchEntity有parentId属性
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../itemCat/search.do?page='+page+"&rows="+rows, searchEntity);
-	}    	
+	}    
+	// 按父类id查找item
+	this.findByParentId=function(id){
+		return $http.get('../itemCat/findByParentId.do?parentId='+id)
+	}
 });

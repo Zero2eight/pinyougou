@@ -87,8 +87,8 @@ public class ItemCatServiceImpl implements ItemCatService {
 		Criteria criteria = example.createCriteria();
 		
 		if(itemCat!=null){			
-						if(itemCat.getName()!=null && itemCat.getName().length()>0){
-				criteria.andNameLike("%"+itemCat.getName()+"%");
+						if(itemCat.getParentId()!=null && itemCat.getParentId()>=0){
+				criteria.andParentIdEqualTo(itemCat.getParentId());
 			}
 	
 		}
@@ -96,5 +96,13 @@ public class ItemCatServiceImpl implements ItemCatService {
 		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
+
+		@Override
+		public List<TbItemCat> findByParentId(Long id) {
+			TbItemCatExample example = new TbItemCatExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andParentIdEqualTo(id);
+			return itemCatMapper.selectByExample(example);
+		}
 	
 }
