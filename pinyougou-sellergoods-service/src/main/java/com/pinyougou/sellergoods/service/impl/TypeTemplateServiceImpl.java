@@ -1,10 +1,17 @@
 package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
 import com.pinyougou.mapper.TbTypeTemplateMapper;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import com.pinyougou.pojo.TbTypeTemplate;
 import com.pinyougou.pojo.TbTypeTemplateExample;
 import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
@@ -22,6 +29,8 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TbTypeTemplateMapper typeTemplateMapper;
+	@Autowired
+	private TbSpecificationOptionMapper specificationOptionMapper;
 	
 	/**
 	 * 查询全部
@@ -105,5 +114,27 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
+
+		@Override
+		public TbTypeTemplate findSpecIdOptions(Long id) {
+			TbTypeTemplate tbTypeTemplate = findOne(id);
+			//将json字符串转换为list,"specIds":"[{\"id\":27,\"text\":\"网络\"},{\"id\":32,\"text\":\"机身内存\"}]"
+			List<Map> list = JSON.parseArray(tbTypeTemplate.getSpecIds(), Map.class);
+			//map:{\"id\":27,\"text\":\"网络\"}
+			for (Map map : list) {
+				//查询规格选项列表 
+	 	 	 	TbSpecificationOptionExample example=new TbSpecificationOptionExample(); 
+	 	 	 	com.pinyougou.pojo.TbSpecificationOptionExample.Criteria criteria = example.createCriteria(); 
+	 	 	 	//获取SpecId
+	 	 	 	criteria.andSpecIdEqualTo( new Long( (Integer)map.get("id") ) ); 
+	 	 	 	//根据SpecId查询并返回
+	 	 	 	List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example); 
+	 	 	 	//将为每个map值更新options选项
+	 	 	 	map.put("options", options); 
+			}
+			tbTypeTemplate.setSpecIds(JSON.toJSONString(list));
+			return tbTypeTemplate;
+			
+		}
 	
 }

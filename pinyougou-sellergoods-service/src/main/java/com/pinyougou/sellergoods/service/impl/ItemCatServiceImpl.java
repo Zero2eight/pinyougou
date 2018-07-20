@@ -78,7 +78,7 @@ public class ItemCatServiceImpl implements ItemCatService {
 		}		
 	}
 	
-	
+		
 		@Override
 	public PageResult findPage(TbItemCat itemCat, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);

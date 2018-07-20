@@ -29,4 +29,10 @@ app.service('goodsService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	this.addGoods=function(entity){
+		return  $http.post('../goods/addGoods.do',entity );
+	}
+	this.findOneGoods=function(id){
+		return  $http.get('../goods/findOneGoods.do?id='+id);
+	}
 });

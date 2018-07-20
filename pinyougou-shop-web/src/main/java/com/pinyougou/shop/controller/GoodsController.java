@@ -1,11 +1,15 @@
 package com.pinyougou.shop.controller;
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbGoodsDesc;
+import com.pinyougou.pojogroup.Goods;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -46,16 +50,16 @@ public class GoodsController {
 	 * @param goods
 	 * @return
 	 */
-	@RequestMapping("/add")
-	public Result add(@RequestBody TbGoods goods){
-		try {
-			goodsService.add(goods);
-			return new Result(true, "增加成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "增加失败");
-		}
-	}
+//	@RequestMapping("/add")
+//	public Result add(@RequestBody TbGoods goods){
+//		try {
+//			goodsService.add(goods);
+//			return new Result(true, "增加成功");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new Result(false, "增加失败");
+//		}
+//	}
 	
 	/**
 	 * 修改
@@ -107,8 +111,33 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/search")
-	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
-		return goodsService.findPage(goods, page, rows);		
+	public PageResult search(@RequestBody TbGoods goods, int page, int rows ){
+		return goodsService.findPage(goods, page, rows);
 	}
 	
+	/**
+	 * goods_edit.html页面的商品信息添加
+	 * @param goods
+	 * @return
+	 */
+	@RequestMapping("/addGoods")
+	public Result addGoods(@RequestBody Goods goods){
+		try {
+			//返回当前登录名
+			String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+			goods.getTbGoods().setSellerId(sellerId);
+			goodsService.add(goods);
+			return new Result(true, "添加成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "添加失败");
+		}
+	}
+	@RequestMapping("/findOneGoods")
+	public Goods findOneGoods(Long id){
+		Goods findOneGoods = goodsService.findOneGoods(id);
+		System.out.println(findOneGoods);
+		return findOneGoods;
+	}
 }
+
