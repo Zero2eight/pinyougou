@@ -37,7 +37,7 @@ public class SolrUtil {
 	private void importItemData() {
 		TbItemExample example = new TbItemExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andStatusEqualTo("1");// 已审核
+		criteria.andStatusEqualTo("2");// 已审核
 		List<TbItem> itemList = itemMapper.selectByExample(example);
 		
 		// 导入的内容展示

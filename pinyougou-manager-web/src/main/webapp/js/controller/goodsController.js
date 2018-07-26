@@ -65,7 +65,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 	}
 	
 	$scope.searchEntity={};//定义搜索对象 
-	
+	$scope.statusList=['未申请','申请中','审核通过','审核未通过'];
 	//搜索
 	$scope.search=function(page,rows){			
 		goodsService.search(page,rows,$scope.searchEntity).success(
@@ -75,5 +75,15 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 			}			
 		);
 	}
-    
+	// 审核的方法:
+	$scope.updateStatus = function(status){
+		goodsService.updateStatus($scope.selectIds,status).success(function(response){
+			if(response.success){
+				$scope.reloadList();//刷新列表
+				$scope.selectIds = [];
+			}else{
+				alert(response.message);
+			}
+		});
+	}
 });	

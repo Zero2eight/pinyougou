@@ -287,5 +287,11 @@
 		<module>pinyougou-search-interface</module>
 		<module>pinyougou-search-service</module>
 		<module>pinyougou-solr-util</module>
+		<module>pinyougou-page-interface</module>
+		<module>pinyougou-page-service</module>
+		<module>pinyougou-page-web</module>
+		<module>pinyougou-user-service</module>
+		<module>pinyougou-user-web</module>
+		<module>pinyougou-user-interface</module>
 	</modules>
 </project>

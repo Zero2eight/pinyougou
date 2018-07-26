@@ -67,5 +67,14 @@ public interface GoodsService {
 
 
 	public Goods findOneGoods(Long id);
+
+
+	public void update(Goods goods);
+
+
+	public void updateStatus(Long[] ids, String status);
+
+
+	public void updateMarket(Long[] ids, String status);
 	
 }

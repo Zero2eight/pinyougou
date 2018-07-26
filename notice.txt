@@ -1,0 +1,13 @@
+/pinyougou-manager-web 9101 
+/pinyougou-shop-web 9102 商家后台
+/pinyougou-portal-web 9103 首页
+/pinyougou-search-web 9104 搜索页
+/pinyougou-page-web 9105 商品页
+/pinyougou-user-web 9106 用户注册
+
+
+/pinyougou-sellergoods-service 9001 20881 
+/pinyougou-content-service 9002 20882 首页广告
+/pinyougou-search-service 9004  20884
+/pinyougou-page-service 9005    20885
+/pinyougou-user-service 9006    20886 

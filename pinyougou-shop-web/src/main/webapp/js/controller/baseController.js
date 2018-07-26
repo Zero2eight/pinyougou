@@ -54,4 +54,22 @@ app.controller("baseController", function($scope) {
 		// 显示效果:网络,机身内存
 		return value;
 	}
+	
 });
+
+//checkbox 全选/取消全选
+var isCheckAll = false;
+
+function swapCheck() {
+	if(isCheckAll) {
+		$("input[type='checkbox']").each(function() {
+			this.checked = false;
+		});
+		isCheckAll = false;
+	} else {
+		$("input[type='checkbox']").each(function() {
+			this.checked = true;
+		});
+		isCheckAll = true;
+	}
+}

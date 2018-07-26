@@ -9,11 +9,11 @@ import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.solr.core.mapping.Dynamic;
 
 public class TbItem implements Serializable {
-	
+
 	@Dynamic
 	@Field("item_spec_*")
-	private Map<String,String> specMap;
-	
+	private Map<String, String> specMap;
+
 	public Map<String, String> getSpecMap() {
 		return specMap;
 	}
@@ -40,6 +40,9 @@ public class TbItem implements Serializable {
 	private BigDecimal price;
 	@Field("item_image")
 	private String image;
+	@Field("item_updatetime")
+	private Date updateTime;
+	
 	private Integer stockCount;
 
 	private Integer num;
@@ -51,8 +54,6 @@ public class TbItem implements Serializable {
 	private String status;
 
 	private Date createTime;
-
-	private Date updateTime;
 
 	private String itemSn;
 

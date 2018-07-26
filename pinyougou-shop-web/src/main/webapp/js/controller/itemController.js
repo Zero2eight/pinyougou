@@ -65,7 +65,7 @@ app.controller('itemController' ,function($scope,$controller   ,itemService){
 	}
 	
 	$scope.searchEntity={};//定义搜索对象 
-	
+	$scope.searchStatus=['未上架','上架中','已删除'];
 	//搜索
 	$scope.search=function(page,rows){			
 		itemService.search(page,rows,$scope.searchEntity).success(

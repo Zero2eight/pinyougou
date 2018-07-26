@@ -77,7 +77,7 @@
 			<artifactId>servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-	<!-- spring-security -->
+		<!-- spring-security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
@@ -102,6 +102,12 @@
 			<groupId>com.pinyougou</groupId>
 			<artifactId>pinyougou-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>5.13.4</version>
 		</dependency>
 	</dependencies>
 

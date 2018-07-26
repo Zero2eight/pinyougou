@@ -25,8 +25,8 @@
 	<!-- 头部栏位 -->
 	<!--页面顶部-->
 	<div id="nav-bottom">
-		<!--顶部-->
 		<div class="nav-top">
+			<!--顶部-->
 			<div class="top">
 				<div class="py-container">
 					<div class="shortcut">
@@ -74,8 +74,8 @@
 									<!--searchAutoComplete-->
 									<div class="input-append">
 										<input type="text" id="autocomplete" type="text"
-											class="input-error input-xxlarge" />
-										<button class="sui-btn btn-xlarge btn-danger" type="button">搜索</button>
+											class="input-error input-xxlarge" ng-model="searchField" />
+										<button class="sui-btn btn-xlarge btn-danger" type="button" ng-click="search()">搜索</button>
 									</div>
 								</form>
 							</div>

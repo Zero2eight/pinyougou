@@ -25,6 +25,11 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 		);
 	}
 	
+	//跳转后执行findByParent0();findOneGoods()
+	$scope.modify=function(id){
+		location.href="goods_edit.html#?id="+id;
+	}
+	
 	//查询实体 
 	$scope.findOne=function(id){				
 		goodsService.findOne(id).success(
@@ -35,7 +40,7 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 	}
 	
 	//保存 
-	$scope.save=function(){				
+	/*$scope.save=function(){				
 		var serviceObject;//服务层对象  				
 		if($scope.entity.id!=null){//如果有ID
 			serviceObject=goodsService.update( $scope.entity ); //修改  
@@ -52,7 +57,7 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 				}
 			}		
 		);				
-	}
+	}*/
 	
 	//增加商品 
 	$scope.add=function(){			
@@ -83,6 +88,11 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 				}						
 			}		
 		);				
+	}
+	
+	//删除指定索引的上传图片
+	$scope.deletePic=function(index){
+		$scope.entity.tbGoodsDesc.itemImages.splice(index,1);
 	}
 	
 	$scope.searchEntity={};//定义搜索对象 
@@ -157,7 +167,7 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 			//规格
 			$scope.entity.tbGoodsDesc.specificationItems=JSON.parse($scope.entity.tbGoodsDesc.specificationItems);
 			//
-			$scope.createSKU();
+//			$scope.createSKU();
 		})
 	}
 	
@@ -331,5 +341,28 @@ app.controller('goodsController', function($scope, $controller,$location,goodsSe
 			}
 		}
 		return false;
+	}
+	
+	// 提交审核的方法:
+	$scope.updateStatus = function(status){
+		goodsService.updateStatus($scope.selectIds,status).success(function(response){
+			if(response.success){
+				$scope.reloadList();//刷新列表
+				$scope.selectIds = [];
+			}else{
+				alert(response.message);
+			}
+		});
+	}
+	// 商品上下架的方法:
+	$scope.updateMarket = function(status){
+		goodsService.updateMarket($scope.selectIds,status).success(function(response){
+			if(response.success){
+				$scope.reloadList();//刷新列表
+				$scope.selectIds = [];
+			}else{
+				alert(response.message);
+			}
+		});
 	}
 });

@@ -67,7 +67,7 @@ public class GoodsServiceImpl implements GoodsService {
 	}
 
 	/**
-	 * 按分页查询
+	 * 按分页查询 不用
 	 */
 	@Override
 	public PageResult findPage(int pageNum, int pageSize) {
@@ -104,20 +104,24 @@ public class GoodsServiceImpl implements GoodsService {
 	}
 
 	/**
-	 * 批量删除
+	 * 批量(逻辑)删除
 	 */
 	@Override
 	public void delete(Long[] ids) {
 		// for (Long id : ids) {
 		// goodsMapper.deleteByPrimaryKey(id);
 		// }
-		//map的属性集
-				Map<String,Long[]> rooms = new HashMap<String, Long[]>();
-				rooms.put("roomsId",ids);
-				//mapper接口
-				goodsMapper.deleteByMapId(rooms);
+		// map的属性集
+		Map<String, Long[]> rooms = new HashMap<String, Long[]>();
+		rooms.put("roomsId", ids);
+		// 逻辑删除
+		goodsMapper.deleteByMapId(rooms);
+
 	}
 
+	/**
+	 * /pinyougou-shop-web仅显示该商家商品 /pinyougou-manager-web显示全部商品
+	 */
 	@Override
 	public PageResult findPage(TbGoods goods, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
@@ -126,16 +130,19 @@ public class GoodsServiceImpl implements GoodsService {
 		Criteria criteria = example.createCriteria();
 
 		if (goods != null) {
+			// 如果商家id不为null,说明是商家
 			if (goods.getSellerId() != null && goods.getSellerId().length() > 0) {
-//				criteria.andSellerIdLike("%" + goods.getSellerId() + "%");
+				// criteria.andSellerIdLike("%" + goods.getSellerId() + "%");
 				criteria.andSellerIdEqualTo(goods.getSellerId());
+				// 否则为manager
+			} else {
+				criteria.andAuditStatusBetween("1", "3");
+
 			}
 			if (goods.getGoodsName() != null && goods.getGoodsName().length() > 0) {
 				criteria.andGoodsNameLike("%" + goods.getGoodsName() + "%");
 			}
-			if (goods.getAuditStatus() != null && goods.getAuditStatus().length() > 0) {
-				criteria.andAuditStatusLike("%" + goods.getAuditStatus() + "%");
-			}
+
 			if (goods.getIsMarketable() != null && goods.getIsMarketable().length() > 0) {
 				criteria.andIsMarketableLike("%" + goods.getIsMarketable() + "%");
 			}
@@ -148,9 +155,10 @@ public class GoodsServiceImpl implements GoodsService {
 			if (goods.getIsEnableSpec() != null && goods.getIsEnableSpec().length() > 0) {
 				criteria.andIsEnableSpecLike("%" + goods.getIsEnableSpec() + "%");
 			}
-//			if (goods.getIsDelete() != null && goods.getIsDelete().length() > 0) {
-//				criteria.andIsDeleteLike("%" + goods.getIsDelete() + "%");
-//			}
+			// if (goods.getIsDelete() != null && goods.getIsDelete().length() >
+			// 0) {
+			// criteria.andIsDeleteLike("%" + goods.getIsDelete() + "%");
+			// }
 
 		}
 		criteria.andIsDeleteEqualTo("0");
@@ -167,6 +175,7 @@ public class GoodsServiceImpl implements GoodsService {
 		TbGoods tbGoods = goods.getTbGoods();
 		// 商品初始状态
 		tbGoods.setAuditStatus("0");
+		tbGoods.setIsDelete("0");
 		// 商家id
 		String sellerId = tbGoods.getSellerId();
 		// 商品录入
@@ -178,9 +187,22 @@ public class GoodsServiceImpl implements GoodsService {
 		TbGoodsDesc tbGoodsDesc = goods.getTbGoodsDesc();
 		tbGoodsDesc.setGoodsId(goodId);
 		goodsDescMapper.insert(tbGoodsDesc);
+		// 更新sku表
+		setItemList(goods);
+	}
 
-		
+	/**
+	 * 
+	 */
+	private void setItemList(Goods goods) {
+		// 添加商品信息(spu表)
+		TbGoods tbGoods = goods.getTbGoods();
+		// 用以item的商品id
+		Long goodsId = tbGoods.getId();
+		// 添加商品描述信息
+		TbGoodsDesc tbGoodsDesc = goods.getTbGoodsDesc();
 		// 用以item的店铺名称
+		String sellerId = tbGoods.getSellerId();
 		TbSeller seller = sellerMapper.selectByPrimaryKey(sellerId);
 		String nickName = seller.getNickName();
 		// 用以item的品牌名称
@@ -208,19 +230,20 @@ public class GoodsServiceImpl implements GoodsService {
 		for (TbItem tbItem : itemList) {
 			// {stockCount: "2", price: "32", spec: {网络: "移动3G", 机身内存:
 			// "32G"}, status: true, isDefault: true}
-			Map<String,Object> map = JSON.parseObject(tbItem.getSpec());
+			Map<String, Object> map = JSON.parseObject(tbItem.getSpec());
 			String title = tbGoods.getGoodsName();
-			if(map!=null){
+			if (map != null) {
 				for (String key : map.keySet()) {
-					title+=map.get(key);
+					title += map.get(key);
 				}
 			}
-			
 			tbItem.setTitle(title);// 创建标题
 			tbItem.setCreateTime(new Date());// 创建日期
 			tbItem.setUpdateTime(new Date());// 更新日期
 			// 商家id
 			tbItem.setSellerId(sellerId);
+			// 商品id
+			tbItem.setGoodsId(goodsId);
 			// 店铺名称
 			tbItem.setSeller(nickName);
 			// 品牌名称
@@ -236,24 +259,87 @@ public class GoodsServiceImpl implements GoodsService {
 			}
 			itemMapper.insert(tbItem);
 		}
+
 	}
 
+	/**
+	 * 修改页展示
+	 */
 	@Override
 	public Goods findOneGoods(Long id) {
 		Goods goods = new Goods();
 		TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
 		TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
-		
-		
+
 		TbItemExample example = new TbItemExample();
 		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
 		criteria.andGoodsIdEqualTo(id);
 		List<TbItem> list = itemMapper.selectByExample(example);
-		
+
 		goods.setItemList(list);
 		goods.setTbGoods(tbGoods);
 		goods.setTbGoodsDesc(tbGoodsDesc);
-		
+
 		return goods;
+	}
+
+	/**
+	 * /pinyougou-shop-web
+	 */
+	@Override
+	public void update(Goods goods) {
+		// 修改商品信息
+		goods.getTbGoods().setAuditStatus("0");
+		goodsMapper.updateByPrimaryKey(goods.getTbGoods());
+		// 修改商品扩展信息:
+		goodsDescMapper.updateByPrimaryKey(goods.getTbGoodsDesc());
+		// 修改SKU信息:
+		// 先删除，再保存:
+		// 删除SKU的信息:
+		TbItemExample example = new TbItemExample();
+		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(goods.getTbGoods().getId());
+		itemMapper.deleteByExample(example);
+		// 保存SKU的信息
+		setItemList(goods);
+	}
+
+	/**
+	 * /pinyougou-manager-web,/pinyougou-shop-web
+	 */
+	@Override
+	public void updateStatus(Long[] ids, String status) {
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+
+			tbGoods.setAuditStatus(status);
+
+			goodsMapper.updateByPrimaryKey(tbGoods);
+		}
+
+	}
+
+	/**
+	 * /pinyougou-shop-web
+	 */
+	@Override
+	public void updateMarket(Long[] ids, String status) {
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+
+			tbGoods.setIsMarketable(status);
+
+			goodsMapper.updateByPrimaryKey(tbGoods);
+			
+			
+			TbItemExample example = new TbItemExample();
+			com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+			criteria.andGoodsIdEqualTo(id);
+			TbItem tbItem = new TbItem();
+			tbItem.setStatus(status);
+			itemMapper.updateByExample(tbItem, example);
+
+		}
+
 	}
 }

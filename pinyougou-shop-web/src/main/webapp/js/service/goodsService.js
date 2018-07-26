@@ -29,10 +29,23 @@ app.service('goodsService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	//增加
 	this.addGoods=function(entity){
 		return  $http.post('../goods/addGoods.do',entity );
 	}
+	//修改
+	this.saveGoods=function(entity){
+		return  $http.post('../goods/saveGoods.do',entity );
+	}
 	this.findOneGoods=function(id){
 		return  $http.get('../goods/findOneGoods.do?id='+id);
+	}
+	//修改提交状态
+	this.updateStatus = function(ids,status){
+		return $http.get('../goods/updateStatus.do?ids='+ids+"&status="+status);
+	}
+	//更改上下架状态
+	this.updateMarket = function(ids,status){
+		return $http.get('../goods/updateMarket.do?ids='+ids+"&status="+status);
 	}
 });

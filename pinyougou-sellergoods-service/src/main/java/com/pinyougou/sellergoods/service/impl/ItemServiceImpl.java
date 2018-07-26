@@ -1,4 +1,5 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -100,7 +101,7 @@ public class ItemServiceImpl implements ItemService {
 				criteria.andImageLike("%"+item.getImage()+"%");
 			}
 			if(item.getStatus()!=null && item.getStatus().length()>0){
-				criteria.andStatusLike("%"+item.getStatus()+"%");
+				criteria.andStatusEqualTo(item.getStatus());
 			}
 			if(item.getItemSn()!=null && item.getItemSn().length()>0){
 				criteria.andItemSnLike("%"+item.getItemSn()+"%");
@@ -109,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
 				criteria.andIsDefaultLike("%"+item.getIsDefault()+"%");
 			}
 			if(item.getSellerId()!=null && item.getSellerId().length()>0){
-				criteria.andSellerIdLike("%"+item.getSellerId()+"%");
+				criteria.andSellerIdEqualTo(item.getSellerId());
 			}
 			if(item.getCartThumbnail()!=null && item.getCartThumbnail().length()>0){
 				criteria.andCartThumbnailLike("%"+item.getCartThumbnail()+"%");
@@ -132,5 +133,18 @@ public class ItemServiceImpl implements ItemService {
 		Page<TbItem> page= (Page<TbItem>)itemMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
+		
+		/**
+		 * 输入Long[] goodsIds,状态为2,
+		 * 获取指定商品集合
+		 */
+		@Override
+		public List<TbItem> updateSearchResult(Long[] goodsIds, String status) {
+			TbItemExample example=new TbItemExample();
+			com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+			System.out.println("状态为:"+status+"ids:"+Arrays.asList(goodsIds));
+			criteria.andGoodsIdIn( Arrays.asList(goodsIds));//指定条件：SPUID集合
+			return itemMapper.selectByExample(example);
+		}
 	
 }
